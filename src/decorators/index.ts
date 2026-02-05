@@ -102,3 +102,11 @@ const author = new Author("Asif");
 console.log(author.posts);
 
 author.greet("Hola");
+
+//! class decorator
+function abc(value: Function, context: ClassDecoratorContext) {
+  console.log("abc called", value);
+}
+
+@abc
+class Test {}

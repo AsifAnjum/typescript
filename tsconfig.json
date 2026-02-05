@@ -26,8 +26,7 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-    "noEmitOnError": true,
-    "experimentalDecorators": false
+    "noEmitOnError": true
   },
 
   "include": ["src"]
