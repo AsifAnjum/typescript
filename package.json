@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev:recap:decorator": "tsx watch src/recap/decorator.ts"
+    "dev:recap:decorator": "tsx watch src/recap/decorator.ts",
+    "dev:recap:decorator_v2": "tsx watch src/recap/decorator_v2.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +17,8 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.2.2"
   }
 }

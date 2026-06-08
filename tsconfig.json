@@ -15,8 +15,13 @@
     "declarationMap": true,
 
     /* Stricter Typechecking Options */
+    
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
+
+    /* Experimental Options decorator v2*/
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
 
     /* Recommended Options */
     "strict": true,
