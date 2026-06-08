@@ -255,3 +255,18 @@ const service = new EmployeeService();
 //cache test
 await service.findById("e-001");
 await service.findById("e-001")
+
+
+// auth test
+try {
+  await service.updateSalary("e-001", 200000);
+} catch (error) {
+  console.log((error as Error).message);
+}
+
+currentUser.role = "Admin";
+
+await service.updateSalary("e-001", 200000);
+
+//Retry test 
+await service.fetchFromExternalAPI("https://api.example.com");
