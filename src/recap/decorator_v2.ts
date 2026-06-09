@@ -270,3 +270,83 @@ await service.updateSalary("e-001", 200000);
 
 //Retry test 
 await service.fetchFromExternalAPI("https://api.example.com");
+
+
+
+//? Property Decorator
+
+// IsEmail Validation
+function isEmail<T extends object, K extends keyof T>(target:T, propertyKey: K & (T[K] extends string ? K : never)){
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$/;
+  const shadowKey = `_${String(propertyKey)}` as keyof T;
+
+  Object.defineProperty(target, propertyKey, {
+    get(this: T){
+      return this[shadowKey]
+    },
+    set(this:T, newValue:unknown){
+      if(typeof newValue === "string" && newValue && !emailRegex.test(newValue)){
+          throw new TypeError(
+          `❌ Invalid email: "${newValue}" — ${String(propertyKey)} must be a valid email`
+        );
+      }
+      this[shadowKey] = newValue as T[typeof shadowKey];
+    },
+    enumerable:true,
+    configurable:true
+  })
+}
+
+// MinLength / MaxLength 
+function MinLength(min : number){
+  return function<T extends object, K extends keyof T>(target:T, propertyKey: K & (T[K] extends string ? K : never)){
+    const shadowKey = `_${String(propertyKey)}` as keyof T;
+    Object.defineProperty(target,propertyKey, {
+      get() {
+        return this[shadowKey]
+      },
+      set(val:string){
+        if(typeof val === 'string' && val.length < min){
+          throw new RangeError(
+            `❌ '${String(propertyKey)}' must be at least ${min} chars (got ${val.length})`
+          )
+        }
+        this[shadowKey] = val
+      },
+      enumerable: true,
+      configurable: true
+    })
+  }
+}
+
+function MaxLength(max: number){
+  return function<T extends object, K extends keyof T>(target:T,propertyKey:K & (T[K] extends string ? K : never)) {
+    const shadowKey = `_${String(propertyKey)}` as keyof T;
+    Object.defineProperty(target,propertyKey, {
+      get(this: T){
+        return this[shadowKey];
+      },
+      set(this:T, value: unknown) {
+        if(typeof value === 'string' && value.length > max){
+          throw new RangeError(
+            `❌ '${String(propertyKey)}' must be at least ${max} chars (got ${value.length})`
+          )
+        }
+        this[shadowKey] = value as T[typeof shadowKey];
+      },
+      enumerable: true,
+      configurable: true
+    })
+  }
+}
+
+
+// Immutable -- readonly 
+function Immutable<T extends object, K extends keyof T>(target:T, propertyKey: K){
+  let value: any;
+  let isSet = false;
+
+  const shadowGetKey = `_${String(propertyKey)}` as keyof T;
+
+  
+}
