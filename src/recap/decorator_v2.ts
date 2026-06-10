@@ -302,22 +302,24 @@ function MinLength(min: number) {
   return function <T extends object, K extends keyof T>(target: T, propertyKey: K & (T[K] extends string ? K : never)) {
     const shadowKey = `_${String(propertyKey)}` as keyof T;
     Object.defineProperty(target, propertyKey, {
-      get() {
+      get(this: T) {
         return this[shadowKey]
       },
-      set(val: string) {
+      set(this: T, val: string) {
+        console.log(`MinLength applied to`, propertyKey);
         if (typeof val === 'string' && val.length < min) {
           throw new RangeError(
             `❌ '${String(propertyKey)}' must be at least ${min} chars (got ${val.length})`
           )
         }
-        this[shadowKey] = val
+        this[shadowKey] = val as T[typeof shadowKey];
       },
       enumerable: true,
       configurable: true
     })
   }
 }
+
 
 function MaxLength(max: number) {
   return function <T extends object, K extends keyof T>(target: T, propertyKey: K & (T[K] extends string ? K : never)) {
@@ -342,23 +344,34 @@ function MaxLength(max: number) {
 
 
 // Immutable -- readonly 
-function Immutable(target: any, propertyKey: string) {
-  let value: any;
-  let isSet = false;
+function Immutable<T extends object, K extends keyof T>(target: T, propertyKey: K) {
+  const dataKey = `_imm_${String(propertyKey)}`;
+  const flagKey = `_imm_set_${String(propertyKey)}`;
 
   Object.defineProperty(target, propertyKey, {
-    get() { return this[`_imm_${propertyKey}`]; },
-    set(val: any) {
-      if (this[`_imm_set_${propertyKey}`]) {
+    get(this: Record<string, unknown>) { return this[dataKey]; },
+    set(this: Record<string, unknown>, val: unknown) {
+      if (this[flagKey]) {
         throw new Error(
-          `❌ Immutable property '${propertyKey}' cannot be reassigned`
+          `❌ Immutable property '${String(propertyKey)}' cannot be reassigned`
         );
       }
-      this[`_imm_${propertyKey}`] = val;
-      this[`_imm_set_${propertyKey}`] = true;
+      this[dataKey] = val;
+      this[flagKey] = true;
+
+      Object.defineProperty(this, propertyKey, {
+        get() { return this[dataKey]; },
+        set() {
+          throw new Error(`❌ Immutable property '${String(propertyKey)}' cannot be reassigned`);
+        },
+        enumerable: true,
+        configurable: false,
+
+      })
     },
     enumerable: true,
-    configurable: false,
+    configurable: true,
+
   });
 }
 
@@ -429,7 +442,15 @@ function Column(options: { type: string; nullable?: boolean; unique?: boolean } 
     if (!columnMetadata.has(className)) {
       columnMetadata.set(className, {})
     }
-    columnMetadata.get(className)![String(propertyKey)] = options;
+
+
+    // this is best code 
+    const classMap = columnMetadata.get(className)!
+    const keyName = String(propertyKey);
+    classMap[keyName] = options
+
+    // this is one line code 
+    // columnMetadata.get(className)![String(propertyKey)] = options;
   }
 }
 
@@ -465,7 +486,13 @@ class EmployeeEntity {
 
 const employee = new EmployeeEntity(
   "550e8400-e29b-41d4-a716-446655440000",
-  "  Rahim  ",
+  "  R  ",
+  "Rahim@example.com",
+  "engineering"
+);
+const employee_1 = new EmployeeEntity(
+  "550e8400-e29b-41d4-a716-446655440000",
+  "  R  ",
   "Rahim@example.com",
   "engineering"
 );
@@ -481,3 +508,16 @@ console.log(
     "name"
   )
 );
+
+console.table(employee_1)
+
+try {
+  employee.id = "AsifAnjum0111"
+} catch (error) {
+  console.log(error)
+}
+
+console.log(`Employee id : ${employee.id}`)
+
+console.log(columnMetadata.get("EmployeeEntity"));
+
