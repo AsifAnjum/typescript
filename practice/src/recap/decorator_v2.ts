@@ -276,42 +276,43 @@ await service.fetchFromExternalAPI("https://api.example.com");
 //? Property Decorator
 
 // IsEmail Validation
-function isEmail<T extends object, K extends keyof T>(target:T, propertyKey: K & (T[K] extends string ? K : never)){
+function isEmail<T extends object, K extends keyof T>(target: T, propertyKey: K & (T[K] extends string ? K : never)) {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$/;
   const shadowKey = `_${String(propertyKey)}` as keyof T;
 
   Object.defineProperty(target, propertyKey, {
-    get(this: T){
+    get(this: T) {
       return this[shadowKey]
     },
-    set(this:T, newValue:unknown){
-      if(typeof newValue === "string" && newValue && !emailRegex.test(newValue)){
-          throw new TypeError(
+    set(this: T, newValue: unknown) {
+      if (typeof newValue === "string" && newValue && !emailRegex.test(newValue)) {
+        throw new TypeError(
           `❌ Invalid email: "${newValue}" — ${String(propertyKey)} must be a valid email`
         );
       }
       this[shadowKey] = newValue as T[typeof shadowKey];
     },
-    enumerable:true,
-    configurable:true
+    enumerable: true,
+    configurable: true
   })
 }
 
 // MinLength / MaxLength 
-function MinLength(min : number){
-  return function<T extends object, K extends keyof T>(target:T, propertyKey: K & (T[K] extends string ? K : never)){
+function MinLength(min: number) {
+  return function <T extends object, K extends keyof T>(target: T, propertyKey: K & (T[K] extends string ? K : never)) {
     const shadowKey = `_${String(propertyKey)}` as keyof T;
-    Object.defineProperty(target,propertyKey, {
-      get() {
+    Object.defineProperty(target, propertyKey, {
+      get(this: T) {
         return this[shadowKey]
       },
-      set(val:string){
-        if(typeof val === 'string' && val.length < min){
+      set(this: T, val: string) {
+        console.log(`MinLength applied to`, propertyKey);
+        if (typeof val === 'string' && val.length < min) {
           throw new RangeError(
             `❌ '${String(propertyKey)}' must be at least ${min} chars (got ${val.length})`
           )
         }
-        this[shadowKey] = val
+        this[shadowKey] = val as T[typeof shadowKey];
       },
       enumerable: true,
       configurable: true
@@ -319,15 +320,16 @@ function MinLength(min : number){
   }
 }
 
-function MaxLength(max: number){
-  return function<T extends object, K extends keyof T>(target:T,propertyKey:K & (T[K] extends string ? K : never)) {
+
+function MaxLength(max: number) {
+  return function <T extends object, K extends keyof T>(target: T, propertyKey: K & (T[K] extends string ? K : never)) {
     const shadowKey = `_${String(propertyKey)}` as keyof T;
-    Object.defineProperty(target,propertyKey, {
-      get(this: T){
+    Object.defineProperty(target, propertyKey, {
+      get(this: T) {
         return this[shadowKey];
       },
-      set(this:T, value: unknown) {
-        if(typeof value === 'string' && value.length > max){
+      set(this: T, value: unknown) {
+        if (typeof value === 'string' && value.length > max) {
           throw new RangeError(
             `❌ '${String(propertyKey)}' must be at least ${max} chars (got ${value.length})`
           )
@@ -342,11 +344,180 @@ function MaxLength(max: number){
 
 
 // Immutable -- readonly 
-function Immutable<T extends object, K extends keyof T>(target:T, propertyKey: K){
-  let value: any;
-  let isSet = false;
+function Immutable<T extends object, K extends keyof T>(target: T, propertyKey: K) {
+  const dataKey = `_imm_${String(propertyKey)}`;
+  const flagKey = `_imm_set_${String(propertyKey)}`;
 
-  const shadowGetKey = `_${String(propertyKey)}` as keyof T;
+  Object.defineProperty(target, propertyKey, {
+    get(this: Record<string, unknown>) { return this[dataKey]; },
+    set(this: Record<string, unknown>, val: unknown) {
+      if (this[flagKey]) {
+        throw new Error(
+          `❌ Immutable property '${String(propertyKey)}' cannot be reassigned`
+        );
+      }
+      this[dataKey] = val;
+      this[flagKey] = true;
 
-  
+      Object.defineProperty(this, propertyKey, {
+        get() { return this[dataKey]; },
+        set() {
+          throw new Error(`❌ Immutable property '${String(propertyKey)}' cannot be reassigned`);
+        },
+        enumerable: true,
+        configurable: false,
+
+      })
+    },
+    enumerable: true,
+    configurable: true,
+
+  });
 }
+
+//Transform
+function Trim<T extends object, K extends keyof T>(target: T, propertyKey: K & (T[K] extends string ? K : never)) {
+  console.log("Trim applied to", propertyKey);
+  const shadowKey = `_${String(propertyKey)}` as keyof T;
+  Object.defineProperty(target, propertyKey, {
+    get(this: T) {
+      return this[shadowKey];
+    },
+    set(this: T, value: unknown) {
+      console.log("SETTER CALLED", value);
+      if (typeof value !== 'string') {
+        throw new TypeError(`'${String(propertyKey)}' must be a string`);
+      }
+
+      this[shadowKey] = value.trim() as T[typeof shadowKey];
+    },
+    enumerable: true,
+    configurable: true
+  })
+}
+
+function ToUpperCase<T extends object, K extends keyof T>(target: T, propertyKey: K & (T[K] extends string ? K : never)) {
+  const shadowKey = `_${String(propertyKey)}` as keyof T;
+
+  Object.defineProperty(target, propertyKey, {
+    get(this: T) {
+      return this[shadowKey];
+    },
+    set(this: T, value: unknown) {
+      if (typeof value !== 'string') {
+        throw new TypeError(`'${String(propertyKey)}' must be a string`)
+      }
+      this[shadowKey] = value.toUpperCase() as T[typeof shadowKey];
+    },
+    enumerable: true,
+    configurable: true
+  })
+}
+
+
+function ToLowerCase<T extends object, K extends keyof T>(target: T, propertyKey: K & (T[K] extends string ? K : never)) {
+  const shadowKey = `_${String(propertyKey)}` as keyof T;
+  Object.defineProperty(target, propertyKey, {
+    get(this: T) {
+      return this[shadowKey];
+    },
+    set(this: T, value: unknown) {
+      if (typeof value !== 'string') {
+        throw new TypeError(`'${String(propertyKey)}' must be a string`)
+      }
+      this[shadowKey] = value.toLowerCase() as T[typeof shadowKey]
+    },
+    enumerable: true,
+    configurable: true
+  })
+}
+
+// Column (TypeOrm style)
+const columnMetadata = new Map<string, Record<string, any>>();
+
+function Column(options: { type: string; nullable?: boolean; unique?: boolean } = { type: "varchar" }) {
+  return function <T extends object, K extends keyof T>(target: T, propertyKey: K & (T[K] extends string ? K : never)) {
+    const className = target.constructor.name;
+
+    if (!columnMetadata.has(className)) {
+      columnMetadata.set(className, {})
+    }
+
+
+    // this is best code 
+    const classMap = columnMetadata.get(className)!
+    const keyName = String(propertyKey);
+    classMap[keyName] = options
+
+    // this is one line code 
+    // columnMetadata.get(className)![String(propertyKey)] = options;
+  }
+}
+
+// Enitty
+class EmployeeEntity {
+  @Immutable
+  @Column({ type: 'varchar', unique: true })
+  public id!: string;
+
+  @Trim
+  @MinLength(2)
+  @MaxLength(8)
+  @Column({ type: 'varchar' })
+  public name!: string;
+
+  @isEmail
+  @ToLowerCase
+  @Column({ type: 'varchar', unique: true })
+  public email!: string;
+
+  @ToUpperCase
+  @Column({ type: "varchar" })
+  public department!: string;
+
+  constructor(id: string, name: string, email: string, department: string) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+    this.department = department;
+  }
+
+}
+
+const employee = new EmployeeEntity(
+  "550e8400-e29b-41d4-a716-446655440000",
+  "  R  ",
+  "Rahim@example.com",
+  "engineering"
+);
+const employee_1 = new EmployeeEntity(
+  "550e8400-e29b-41d4-a716-446655440000",
+  "  R  ",
+  "Rahim@example.com",
+  "engineering"
+);
+
+console.table(employee)
+console.log('Employee Name', employee.name)
+console.log('Employee Email', employee.email)
+console.log('Employee Department', employee.department)
+
+console.log(
+  Object.getOwnPropertyDescriptor(
+    EmployeeEntity.prototype,
+    "name"
+  )
+);
+
+console.table(employee_1)
+
+try {
+  employee.id = "AsifAnjum0111"
+} catch (error) {
+  console.log(error)
+}
+
+console.log(`Employee id : ${employee.id}`)
+
+console.log(columnMetadata.get("EmployeeEntity"));
+
