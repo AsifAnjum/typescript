@@ -5,14 +5,12 @@ import { Sorter } from "./sorter";
 
 
 const numbersOfCollection = new NumbersCollection([10,3,-5,0]);
-const sorter = new Sorter(numbersOfCollection);
-sorter.bubble_sort();
-console.log(numbersOfCollection.data);
+numbersOfCollection.bubble_sort();
+numbersOfCollection.print();
 
 const charactersCollection = new CharactersCollection('XaaAyb');
-const sorter2 = new Sorter(charactersCollection);
-sorter2.bubble_sort();
-console.log(charactersCollection.data);
+charactersCollection.bubble_sort();
+charactersCollection.print();
 
 
 const linkedList = new LinkedList();
@@ -23,7 +21,6 @@ linkedList.add(44);
 
 linkedList.print()
 
-const sorter3 = new Sorter(linkedList);
-sorter3.bubble_sort();
+linkedList.bubble_sort();
 console.log('Sorted Linked List:');
 linkedList.print();
