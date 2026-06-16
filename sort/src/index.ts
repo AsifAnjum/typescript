@@ -1,34 +1,29 @@
-class Sorter {
-    constructor(public collection: number[]| string){}
+import { CharactersCollection } from "./characters-collection";
+import { LinkedList } from "./linked-list";
+import { NumbersCollection } from "./numbers-collection";
+import { Sorter } from "./sorter";
 
-    public bubble_sort(): void {
-        const {length} = this.collection;
 
-        for(let i = 0; i < length; i++){
-            for(let j = 0; j < length - i -1; j++){
-                if(this.collection instanceof Array && this.collection[j] > this.collection[j+1]){
-                    const leftHand = this.collection[j];
-                    this.collection[j] = this.collection[j+1];
-                    this.collection[j+1] = leftHand;   
-                }
-
-                if(typeof this.collection === 'string'){
-                    const leftHandCharCode = this.collection.charCodeAt(j);
-                    const rightHandCharCode = this.collection.charCodeAt(j+1);
-
-                    
-                }
-
-            }
-        }
-    }
-
-}
-
-const sorter = new Sorter([10,3,-5,0]);
+const numbersOfCollection = new NumbersCollection([10,3,-5,0]);
+const sorter = new Sorter(numbersOfCollection);
 sorter.bubble_sort();
-console.log(sorter.collection);
+console.log(numbersOfCollection.data);
 
-const sorter2 = new Sorter('Xayb');
+const charactersCollection = new CharactersCollection('XaaAyb');
+const sorter2 = new Sorter(charactersCollection);
 sorter2.bubble_sort();
-console.log(sorter2.collection);
+console.log(charactersCollection.data);
+
+
+const linkedList = new LinkedList();
+linkedList.add(500);
+linkedList.add(-10);
+linkedList.add(-76);
+linkedList.add(44);
+
+linkedList.print()
+
+const sorter3 = new Sorter(linkedList);
+sorter3.bubble_sort();
+console.log('Sorted Linked List:');
+linkedList.print();
