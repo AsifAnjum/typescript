@@ -16,5 +16,9 @@
     "@types/node": "^25.9.3",
     "concurrently": "^10.0.3",
     "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "prettier": "^2.8.8"
   }
 }
