@@ -1,12 +1,17 @@
+import axios, { AxiosResponse } from "axios";
+import { Eventing } from "./Eventing";
+
 interface UserProps {
+    id?: string;
     name?: string;
     age?: number;
 }
 
-type Callback = () => void
 
-export class User {
-    public events: { [key: string]: Callback[] } = {};
+
+export class User { 
+
+    public events: Eventing = new Eventing(); 
 
     constructor(private data: UserProps) { }
 
@@ -18,22 +23,7 @@ export class User {
         Object.assign(this.data, updateProperties);
     }
 
-    public on(eventName: string, callback: Callback): void {
-        const handlers = this.events[eventName] || [];
-        handlers.push(callback);
-        this.events[eventName] = handlers;
-    }
 
-    public trigger(eventName: string): void {
-        const handlers = this.events[eventName];
 
-        if (!handlers || handlers.length === 0) {
-            return;
-        }
-
-        handlers.forEach(callback => {
-            callback();
-        })
-    }
 
 }

@@ -1,27 +1,21 @@
-import { User } from "./models/User";
+import { User } from './models/User';
 
-const user = new User({ name: "John", age: 30 });
+const user = new User({ id: "-EC6Qoym-NU" })
 
-// user.set({ name: "Jane" });
+console.log("Before Fetch");
 
-// console.log(user.get("name"));
-// console.log(user.get("age"));
-
-user.on('change', () => {
-    console.log('change #1')
+user.events.on('change', () => {
+    console.log("User has changed!!!");
 })
 
-user.on('change', () => {
-    console.log('change #2')
-})
-
-user.on('save', () => {
-
-    console.log('save #1')
-})
+user.events.trigger('change');
 
 
-user.trigger('change')
-user.trigger('save')
+user.fetch()
 
-console.log(user)
+
+user.set({name: 'New Name', age: 999})
+
+user.save()
+
+setTimeout(() => console.log(user),100)

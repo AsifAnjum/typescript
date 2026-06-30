@@ -1,0 +1,15 @@
+{
+  "users": [
+    {
+      "id": "-EC6Qoym-NU",
+      "name": "New Name",
+      "age": 999
+    },
+    {
+      "name": "Anjum",
+      "age": 100000,
+      "id": "b15nyUIp_cQ"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
