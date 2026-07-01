@@ -1,29 +1,24 @@
 import axios, { AxiosResponse } from "axios";
 import { Eventing } from "./Eventing";
+import { Sync } from "./Sync";
+import { Attributes } from "./Attributes";
 
-interface UserProps {
+export interface UserProps {
     id?: string;
     name?: string;
     age?: number;
 }
 
-
+const rootUrl = 'http://localhost:3000/users';
 
 export class User { 
-
     public events: Eventing = new Eventing(); 
-
-    constructor(private data: UserProps) { }
-
-    get(propertyName: keyof UserProps): UserProps[keyof UserProps] {
-        return this.data[propertyName];
+    public sync: Sync<UserProps> = new Sync<UserProps>(rootUrl);
+    public atrributes: Attributes<UserProps>;
+    
+    constructor(attrs: UserProps) {
+        this.atrributes = new Attributes<UserProps>(attrs);
     }
-
-    set(updateProperties: UserProps): void {
-        Object.assign(this.data, updateProperties);
-    }
-
-
 
 
 }
