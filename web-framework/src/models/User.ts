@@ -1,7 +1,7 @@
-import axios, { AxiosResponse } from "axios";
-import { Eventing } from "./Eventing";
-import { Sync } from "./Sync";
+import { APISync } from "./APISync";
 import { Attributes } from "./Attributes";
+import { Eventing } from "./Eventing";
+import { Model } from "./Model";
 
 export interface UserProps {
     id?: string;
@@ -11,14 +11,17 @@ export interface UserProps {
 
 const rootUrl = 'http://localhost:3000/users';
 
-export class User { 
-    public events: Eventing = new Eventing(); 
-    public sync: Sync<UserProps> = new Sync<UserProps>(rootUrl);
-    public atrributes: Attributes<UserProps>;
-    
-    constructor(attrs: UserProps) {
-        this.atrributes = new Attributes<UserProps>(attrs);
-    }
-
-
+export class User extends Model<UserProps> {
+  static buildUser(attrs: UserProps): User {
+    return new User (
+        new Attributes<UserProps>(attrs),
+        new APISync<UserProps>(rootUrl),
+        new Eventing(),
+    )
+  }
+   
+  public isAdminUser(): boolean {
+     return this.get('id') === 'U9-Mo-Za-ro'
+  }
 }
+

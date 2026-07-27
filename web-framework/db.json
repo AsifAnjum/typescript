@@ -11,9 +11,29 @@
       "id": "b15nyUIp_cQ"
     },
     {
+      "id": "U9-Mo-Za-ro",
       "name": "John",
+      "age": 25
+    },
+    {
+      "name": "Rabi",
       "age": 25,
-      "id": "U9-Mo-Za-ro"
+      "id": "8R-7HyHpbfc"
+    },
+    {
+      "name": "Rabi",
+      "age": 25,
+      "id": "wAQWWcR3Hz0"
+    },
+    {
+      "name": "Tim",
+      "age": 28,
+      "id": "Cweb_bE26Yc"
+    },
+    {
+      "id": "yUvBXfsJx2U",
+      "name": "New Name",
+      "age": 999
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

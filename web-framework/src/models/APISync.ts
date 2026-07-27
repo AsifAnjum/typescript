@@ -5,7 +5,7 @@ interface HasID {
     id?: number|string;
 }
 
-export class Sync<T extends HasID> {
+export class APISync<T extends HasID> {
     
     constructor(public rootUrl:string){}
 
@@ -15,7 +15,6 @@ export class Sync<T extends HasID> {
 
     public save(data:T):AxiosPromise {
       const {id} = data
-      
         
         if(id){
           return axios.put(`${this.rootUrl}/${id}`, data);

@@ -1,8 +1,12 @@
-import { User } from './models/User';
+import { User } from "./models/User";
 
-const user = new User({ id: "-EC6Qoym-NU" })
+const user = User.buildUser({
+ id: 'yUvBXfsJx2U'
+})
 
+user.on('change', ()=> {
+    console.log(user);
+    
+})
 
-const userData = user.sync.fetch(user.atrributes.get('id')!)
-
-console.log(userData.then((res) => console.log(res.data)))
+user.fetch()
