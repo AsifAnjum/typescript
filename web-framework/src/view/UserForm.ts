@@ -17,6 +17,7 @@ export class UserForm {
       "click:button": this.onButtonClick,
       "mouseenter:h1": this.onHeaderHover,
       "click:.set-age": this.onSetAgeClick,
+      "click:.set-name": this.onSetNameClick,
     };
   }
 
@@ -32,6 +33,15 @@ export class UserForm {
     this.model.setRandomAge();
   };
 
+  public onSetNameClick = (): void => {
+    const input = this.parent.querySelector("input");
+
+    if (input) {
+      const value = input.value;
+      this.model.set({ name: value });
+    }
+  };
+
   public template(): string {
     return `
            <div>
@@ -39,7 +49,7 @@ export class UserForm {
            <h1 >User Name:${this.model.get("name") ?? "GUEST"}</h1> 
            <h1 >User Age:${this.model.get("age") ?? 0}</h1>         
            <input>
-           <button> Click Me </button>
+          <button class='set-name'>Set name</button>     
            <button class='set-age'>Set random age</button>     
            </div>
         `;
