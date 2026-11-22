@@ -28,19 +28,11 @@ export class Model<T extends HasID> {
         private events: Events
    ){}
     
-    public get on() {
-        return this.events.on
-    }
+    public on = this.events.on
+    public trigger = this.events.trigger
+    public get = this.attributes.get
 
-    public get trigger() {
-        return this.events.trigger;
-    }
-
-    public get get() {
-        return this.attributes.get;
-    }
-
-    public set(update: T) : void {
+     public set(update: T) : void {
         this.attributes.set(update);
         this.trigger('change');
     }
