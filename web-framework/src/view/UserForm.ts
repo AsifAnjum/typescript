@@ -8,6 +8,7 @@ export class UserForm extends View<User, UserProps> {
       "mouseenter:h1": this.onHeaderHover,
       "click:.set-age": this.onSetAgeClick,
       "click:.set-name": this.onSetNameClick,
+      "click:.save-model": this.onSaveClick,
     };
   }
 
@@ -23,6 +24,10 @@ export class UserForm extends View<User, UserProps> {
     this.model.setRandomAge();
   };
 
+  public onSaveClick = (): void => {
+    this.model.save();
+  };
+
   public onSetNameClick = (): void => {
     const input = this.parent.querySelector("input");
 
@@ -34,13 +39,11 @@ export class UserForm extends View<User, UserProps> {
 
   public template(): string {
     return `
-           <div>
-           <h1> User Form </h1>
-           <h1 >User Name:${this.model.get("name") ?? "GUEST"}</h1> 
-           <h1 >User Age:${this.model.get("age") ?? 0}</h1>         
-           <input>
+           <div>        
+           <input placeholder="${this.model.get("name")}"/>
           <button class='set-name'>Set name</button>     
-           <button class='set-age'>Set random age</button>     
+           <button class='set-age'>Set random age</button> 
+            <button class="save-model"> Save User </button>  
            </div>
         `;
   }

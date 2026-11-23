@@ -34,6 +34,21 @@
       "id": "yUvBXfsJx2U",
       "name": "New Name",
       "age": 999
+    },
+    {
+      "name": "NAME",
+      "age": 20,
+      "id": "05pwMJeB49Y"
+    },
+    {
+      "name": "",
+      "age": 32,
+      "id": "0z4nrmYybag"
+    },
+    {
+      "name": "adsfa",
+      "age": 9,
+      "id": "4kDY58mMTL4"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
