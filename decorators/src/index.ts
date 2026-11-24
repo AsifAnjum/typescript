@@ -1,3 +1,4 @@
+@classDecorator
 class Boat {
   @testDecorator
   public color: string = "red";
@@ -29,9 +30,9 @@ function logError(message: string) {
   ): void {
     const method = descriptor.value;
 
-    descriptor.value = function () {
+    descriptor.value = function (...args: any[]) {
       try {
-        method();
+        method.apply(this, args);
       } catch (e: any) {
         console.log(
           "Oops, boat was sunk\n",
@@ -51,6 +52,10 @@ function testDecorator(target: any, key: string) {
 
 function parameterDecorator(target: any, key: string, index: number) {
   console.log(key, index);
+}
+
+function classDecorator(constructor: typeof Boat) {
+  console.log(constructor);
 }
 
 new Boat().pilot("fast", true);
