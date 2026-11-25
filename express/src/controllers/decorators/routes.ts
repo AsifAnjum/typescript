@@ -1,6 +1,7 @@
 import e from "express";
 import "reflect-metadata";
 import { Methods } from "./methods.enum";
+import { MetadataKeys } from "./metadata.keys";
 // export function get(path: string) {
 //   return function (target: any, key: string, descriptor: PropertyDescriptor) {
 //     Reflect.defineMetadata("path", path, target, key);
@@ -17,8 +18,8 @@ import { Methods } from "./methods.enum";
 function routeBinder(method: string) {
   return function (path: string) {
     return function (target: any, key: string, descriptor: PropertyDescriptor) {
-      Reflect.defineMetadata("path", path, target, key);
-      Reflect.defineMetadata("method", method, target, key);
+      Reflect.defineMetadata(MetadataKeys.path, path, target, key);
+      Reflect.defineMetadata(MetadataKeys.method, method, target, key);
     };
   };
 }
