@@ -33,17 +33,6 @@ router.get("/login", (req, res) => {
     `);
 });
 
-router.post("/login", (req: RequestWithBody, res: Res) => {
-  const { email, password } = req.body;
-
-  if (email && password && email === "hi@hi.com" && password === "1234") {
-    req.session = { loggedIn: true };
-    res.redirect("/");
-  } else {
-    res.send("Invalid email or password");
-  }
-});
-
 router.get("/", (req, res) => {
   res.setHeader("Cache-Control", "no-store");
   if (req.session?.loggedIn) {

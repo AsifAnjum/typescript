@@ -1,4 +1,4 @@
-import { get, controller, use } from "./decorators";
+import { get, controller, use, post, bodyValidator } from "./decorators";
 
 function logger(req: Req, res: Res, next: Next) {
   console.log("Request was made");
@@ -24,5 +24,18 @@ class LoginController {
          <button type="submit">Login</button>
          </form>
         `);
+  }
+
+  @post("/login")
+  @bodyValidator("email", "password")
+  public postLogin(req: Req, res: Res) {
+    const { email, password } = req.body;
+
+    if (email === "hi@hi.com" && password === "1234") {
+      req.session = { loggedIn: true };
+      res.redirect("/");
+    } else {
+      res.send("Invalid email or password");
+    }
   }
 }
